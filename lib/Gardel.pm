@@ -14,6 +14,7 @@ our @EXPORT = qw/
     PUT 
     DELETE 
     ANY
+    config
 /;
 
 our $dispatch = {};
@@ -23,6 +24,8 @@ sub POST($&)   { _add_rule( 'POST'   => @_ ) }
 sub DELETE($&) { _add_rule( 'DELETE' => @_ ) }
 sub PUT($&)    { _add_rule( 'PUT'    => @_ ) }
 sub ANY($&)    { _add_rule( 'ANY'    => @_ ) }
+
+sub config($)  { $dispatch->{config} = shift }
 
 =head1 NAME
 
@@ -47,6 +50,13 @@ You can run a webapp running just this code:
     PUT '/upload'      => sub { # store the file! };
 
 =head1 FUNCTIONS
+
+=head2 GET
+=head2 POST
+=head2 DELETE
+=head2 PUT
+=head2 ANY
+=head2 config
 
 =head2 _add_rule
 
@@ -154,8 +164,17 @@ sub create_rule {
 
 # Start engines!, go -> :)
 END {
-    my $pid = __PACKAGE__->new(3000)->run();
-    #print "Use 'kill $pid' to stop server.\n";
+    unless ( $dispatch->{config}{test} || $ENV{GARDEL_TEST} ) {
+        my $server = __PACKAGE__->new( $dispatch->{config}{port} || 3000 );
+        if ( $dispatch->{config}{daemon} ) {
+            my $pid = $server->background();
+            print STDERR "Use 'kill $pid' to stop server.\n";
+        }
+        else {
+            print STDERR "Use ctrl+c to stop server.\n";
+            $server->run();
+        }
+    }
 }
 
 =head1 AUTHOR
