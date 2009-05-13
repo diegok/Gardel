@@ -1,0 +1,8 @@
+Build.PL
+Changes
+MANIFEST
+README
+lib/Gardel.pm
+t/00-load.t
+t/pod-coverage.t
+t/pod.t
