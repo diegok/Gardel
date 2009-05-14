@@ -1,0 +1,21 @@
+---
+name: Gardel
+version: 0.01
+author:
+  - 'Diego Kuperman <diego@freekeylabs.com>'
+abstract: The great tango star that also has a hat!
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+requires:
+  HTTP::Server::Simple::CGI: 0
+build_requires:
+  Test::More: 0
+provides:
+  Gardel:
+    file: lib/Gardel.pm
+    version: 0.01
+generated_by: Module::Build version 0.2808
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2

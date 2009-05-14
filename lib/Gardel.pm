@@ -49,13 +49,35 @@ You can run a webapp running just this code:
     GET '/hello/:word' => sub { 'Hello ' . $_[1]->{word} };
     PUT '/upload'      => sub { # store the file! };
 
-=head1 FUNCTIONS
+=head1 How to define http actions
+
+    You can define a new http action using the http verb to wich the action
+    will respond. Any action has two parts, the route definition and a sub reference to be
+    called for this action.
+
+    You can define named parameters when defining a route prefixing some parts of the route
+    with a semicolon. This will be parsed and pased as a hashref on the second parameter to
+    the sub reference. The first parameter is a CGI object for the current request.
+
+    For example:
+
+    [VERB] '/this/:person/is/:color' => sub { my ( $cgi, $param ) = @_; ... }
 
 =head2 GET
+    Define a GET action.
+
 =head2 POST
+    Define a POST action.
+
 =head2 DELETE
+    Define a DELETE action.
+
 =head2 PUT
+    Define a PUT action.
+
 =head2 ANY
+    Define a ANY action.
+
 =head2 config
 
 =head2 _add_rule
