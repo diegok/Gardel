@@ -5,8 +5,10 @@ use strict;
 
 use base qw/ 
     Exporter 
-    HTTP::Server::Simple::CGI 
 /;
+
+use Gardel::Engine;
+use Gardel::Server;
 
 our @EXPORT = qw/ 
     GET 
@@ -91,68 +93,6 @@ sub _add_rule {
     push @{$dispatch->{$method}}, create_rule( $route_def, $action_sub );
 }
 
-=head2 handle_request
-
-    This method will handle each request trying to match some defined
-    rule on the requested http method or ANY (wildcard meta-method) 
-    and executing that rule code.
-
-=cut
-sub handle_request {
-    my ( $self, $cgi ) = @_;
-
-    unless ( $self->_handle( $cgi => $cgi->request_method )
-          || $self->_handle( $cgi => 'ANY' ) )
-    {
-        print "HTTP/1.0 404 Not found\r\n";
-        print $cgi->header,
-            $cgi->start_html('Not found'),
-            $cgi->h1('Not found'),
-            $cgi->end_html;
-    }
-}
-
-=head2 _handle
-
-    Match and exec a rule on the given method
-
-=cut
-sub _handle {
-    my ($self, $cgi, $method) = @_;
-
-    my $handled = 0;
-
-    if ( exists $dispatch->{ $method } ) {
-        my $path = $cgi->path_info();
-        for my $rule ( @{ $dispatch->{$method} } ) {
-            if ( my @capture = $path =~ $rule->{regex} ) {
-                print "HTTP/1.0 200 OK\r\n";
-                print $cgi->header;
-                print $rule->{action}->($cgi, $self->zip( $rule->{capture_name}, \@capture ) );
-                $handled++;
-            }
-        }
-    }
-
-    return $handled;
-}
-
-=head2 zip
-
-    Just a helper method to create a hash from two arrays (must use a module)
-
-=cut
-sub zip {
-    my ( $self, $keys, $values ) = @_;
-
-    my $hr = {};
-    for my $key ( @$keys ) {
-        $hr->{ $key } = shift @$values;
-    }
-
-    return $hr;
-}
-
 =head2 create_rule
 
 =cut
@@ -187,15 +127,12 @@ sub create_rule {
 # Start engines!, go -> :)
 END {
     unless ( $dispatch->{config}{test} || $ENV{GARDEL_TEST} ) {
-        my $server = __PACKAGE__->new( $dispatch->{config}{port} || 3000 );
-        if ( $dispatch->{config}{daemon} ) {
-            my $pid = $server->background();
-            print STDERR "Use 'kill $pid' to stop server.\n";
-        }
-        else {
-            print STDERR "Use ctrl+c to stop server.\n";
-            $server->run();
-        }
+        my $server = Gardel::Server->new;
+        $server->app( Gardel::Engine->new( $dispatch ) );
+        $server->port( $dispatch->{config}{port} || 3000 );
+
+        print STDERR "Use ctrl+c to stop server.\n";
+        $server->run();
     }
 }
 

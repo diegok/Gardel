@@ -5,7 +5,7 @@ WriteMakefile
           'NAME' => 'Gardel',
           'VERSION_FROM' => 'lib/Gardel.pm',
           'PREREQ_PM' => {
-                           'HTTP::Server::Simple::CGI' => '0',
+                           'Mojo' => '0',
                            'Test::More' => '0'
                          },
           'INSTALLDIRS' => 'site',

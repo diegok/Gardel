@@ -3,6 +3,42 @@ use base 'Mojo';
 
 __PACKAGE__->attr( 'dispatch' );
 
+=head1 NAME
+
+Gardel::Engine - The http dispatcher engine for Gardel
+
+=head1 VERSION
+
+Version 0.01
+
+=cut
+
+our $VERSION = '0.01';
+
+=head1 DESCRIPTION
+
+This is the internal 'Mojo' engine that match and exec the Gardel defined rules.
+
+=head1 SYNOPSIS
+
+    use Gardel::Engine;
+
+    my $engine = Gardel::Engine->new(
+        {   'GET' => [
+                {   regex  => qr/^\/hello/,
+                    action => sub {"Hello world!"}
+                }
+            ]
+        }
+    );
+
+=cut
+
+=head2 new
+
+    Build a new Mojo handler for the given dispatch table.
+
+=cut
 sub new {
     my $self = shift->SUPER::new();
     
@@ -16,6 +52,10 @@ sub new {
 
     return $self;
 }
+
+=head2 dispatch
+
+    Set or retrieve the dispatch table structure.
 
 =head2 handler
 
@@ -38,7 +78,10 @@ sub handler {
 
 =head2 _handle
 
-    Match and exec a rule on the given method
+    Match and exec a rule on the given method.
+
+    The action will receive a Mojo::Transaction and a href with 
+    the captured parameters from the matched rule if any.
 
 =cut
 sub _handle {
@@ -81,4 +124,17 @@ sub zip {
     return $hr;
 }
 
-1;
+=head1 AUTHOR
+
+Diego Kuperman, C<< <diego at freekeylabs.com> >>
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2009 Diego Kuperman, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=cut
+
+1; # End of Gardel

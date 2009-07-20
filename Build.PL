@@ -11,7 +11,7 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
     },
     requires => {
-        'HTTP::Server::Simple::CGI'  => 0,
+        'Mojo'  => 0,
     },
     add_to_cleanup      => [ 'Gardel-*' ],
     create_makefile_pl => 'traditional',
